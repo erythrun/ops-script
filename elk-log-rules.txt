@@ -1,0 +1,93 @@
+cat << EOF > /etc/filebeat/filebeat.yml
+filebeat.inputs:
+- type: filestream
+  paths:
+    - '/apps/ptc/logs/services/[0-9]*/*/ptc.log'
+output.logstash:
+  hosts: ["localhost:5044"]
+EOF
+
+cat << EOF > /etc/logstash/conf.d/ptc.conf
+input {
+    beats {
+        port => "5044"
+    }
+}
+filter {
+    grok {
+        match => {
+            "message" => '\[%{TIMESTAMP_ISO8601}\]-\[%{INT}\]-\[%{LOGLEVEL}\] POINT SERVICE COMPLETED.*COST TIME: %{INT:cost_time} ms.*hbase.*%{INT:vista_time}'
+        }
+        add_tag => ["valid"]
+
+    }
+    if "valid" not in [tags] {
+      drop {}
+    }
+
+    mutate{
+        add_field => {
+            "data_tmp" => "%{[log][file][path]}"
+        }
+        remove_field => ["@version","@version","agent","input","ecs","message","host","log"]
+
+    }
+    mutate {
+        split => ["data_tmp", "/"]
+        add_field => {
+            "localnet" => "%{[data_tmp][5]}"
+            "interface" => "%{[data_tmp][6]}"
+        }
+        remove_field => "data_tmp"
+    }
+    aggregate {
+        task_id => "%{localnet}_%{interface}"
+        timeout => 60
+        push_map_as_event_on_timeout => true
+        code => "
+            map['localnet'] ||= event.get('localnet');
+            map['interface'] ||= event.get('interface');
+            map['count'] ||= 0;
+            map['count'] += 1;
+            map['cost_total_time'] ||= 0;
+            map['cost_total_time'] += event.get('cost_time').to_i;
+            map['cost_max_time_list'] ||= [];
+            map['cost_max_time_list'].append(event.get('cost_time').to_i);
+            map['vista_total_time'] ||= 0;
+            map['vista_total_time'] += event.get('vista_time').to_i;
+            map['vista_max_time_list'] ||= [];
+            map['vista_max_time_list'].append(event.get('vista_time').to_i);
+        "
+        timeout_code =>"
+            cost_avg_time = (event.get('cost_total_time') / event.get('count')).round(4);
+            vista_avg_time = (event.get('vista_total_time') / event.get('count')).round(4);
+            vista_max_time = event.get('vista_max_time_list').max;
+            cost_max_time = event.get('cost_max_time_list').max;
+            event.set('cost_avg_time', cost_avg_time);
+            event.set('vista_avg_time', vista_avg_time);
+            event.set('cost_max_time', cost_max_time);
+            event.set('vista_max_time', vista_max_time);
+            event.set('ip', '0.0.0.0');
+        "
+        #add_tag => ["caculate"]
+    }
+    if "valid" not in [tags] {
+        mutate {
+            remove_field => ["cost_max_time_list","vista_max_time_list","@version"]
+        }
+    }
+    if "valid" in [tags] {
+        drop {}
+    }
+}
+output {
+    elasticsearch {
+        hosts => ["http://132.121.97.94:9200","http://132.121.97.93:9200","http://132.121.97.146:9200"]
+        index => "ptc_%{+YYYY.MM.dd}"
+        user => "ptc"
+        password => "passwd"
+
+    }
+    #stdout { codec => rubydebug }
+}
+EOF
