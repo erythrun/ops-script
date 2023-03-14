@@ -3,7 +3,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-12 18:21:29
- # @LastEditTime: 2023-01-06 10:49:58
+ # @LastEditTime: 2023-03-14 14:30:53
  # @description: bash init-disk.sh 1 "sdb" "/app"
  #               bash init-disk.sh 2 "sda,sdb,sdc" "/app"
  #               bash init-disk.sh 3 "lvm模式未完成"
@@ -30,18 +30,29 @@ function disk {
   fi
 }
 
+#check folder
+function check {
+  if [ -d "$1" ]; then
+    echo "$1 exist! init exit"
+    exit 1
+  fi
+}
 
-if [ -d "$3" ]; then
-  echo "$3 exist!"
-  echo "$3 exist!" >> /tmp/init.log
-  exit 1
-fi
 
+# if [ -d "$3" ]; then
+#   echo "$3 exist!"
+#   echo "$3 exist!" >> /tmp/init.log
+#   exit 1
+# fi
 
-if [ $1 == 1 ];
 #$1 单磁盘模式
+if [ $1 == 1 ];
 then
-  disk $2 $3
+  check $3
+  if [ $? == 0 ];
+  then
+    disk $2 $3
+  fi
 fi
 
 count=0 #用于计算多磁盘模式的顺序
@@ -53,8 +64,13 @@ then
   array=(`echo $2 | tr ',' ' '` )
   for var in ${array[@]}
   do
-    disk "$var" $3$count
-    count=`expr $count + 1`
+    echo "check $3$count"
+    check $3$count
+    if [ $? == 0 ];
+    then
+      disk "$var" $3$count
+      count=`expr $count + 1`
+    fi
   done
 fi
 
@@ -62,5 +78,3 @@ if [ $1 == 3 ];
 then
   echo 'lvm 模式未想好咋搞'
 fi
-
-

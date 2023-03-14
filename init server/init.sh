@@ -1,8 +1,24 @@
+###
+ # @Author: Athrun
+ # @Email: erythron@outlook.com
+ # @Date: 2022-12-10 10:22:22
+ # @LastEditTime: 2023-03-14 14:26:26
+ # @description: now it is null
+###
+
+
 selinux_conf="/etc/selinux/config"
 sshd_conf="/etc/ssh/sshd_config"
 ntp_conf="/etc/ntp.conf"
 profile_file="/etc/profile"
 limit_file="/etc/security/limits.conf"
+resultSudo=`echo $1 | grep 'sudo'`
+resultDns=`echo $1 | grep 'dns'`
+resultPaas=`echo $1 | grep 'paas'`
+resultUlimit=`echo $1 | grep 'ulimit'`
+resultUmask=`echo $1 | grep 'umask'`
+user=$2
+home=$3
 
 function sudoIssue {
   content=`sudo cat /etc/sudoers| grep "# Defaults secure_path"`
@@ -51,22 +67,14 @@ function forPaas {
 
 function configUmask {
   content1=`sudo grep "umask" /root/.bashrc`
-  content2=`sudo grep "umask" /home/$user/.bashrc`
+  content2=`sudo grep "umask" $home/.bashrc`
   if [ -z "${content1}" ] ;then
       echo 'umask 002' | sudo tee -a /root/.bashrc
   fi
   if [ -z "${content2}" ] ;then
-      echo 'umask 022' | sudo tee -a /home/$user/.bashrc
+      echo 'umask 022' | sudo tee -a $home/.bashrc
   fi
 }
-
-
-resultSudo=`echo $1 | grep 'sudo'`
-resultDns=`echo $1 | grep 'dns'`
-resultPaas=`echo $1 | grep 'paas'`
-resultUlimit=`echo $1 | grep 'ulimit'`
-resultUmask=`echo $1 | grep 'umask'`
-user=$2
 
 
 if [[ -n $resultSudo ]] ;then

@@ -2,11 +2,10 @@
 Author: Athrun
 Email: erythron@outlook.com
 Date: 2023-01-06 10:24:19
-LastEditTime: 2023-01-06 10:44:19
+LastEditTime: 2023-03-14 14:28:18
 description: linux init, use: python2 init.py <ip.file>(ip port account password)
 '''
 import os,sys,time
-
 
 
 disk_type=1
@@ -119,7 +118,7 @@ def AddUser(ip, port, username, password):
 
 def Customize(ip, port, username, password):
     customize_exec1="./sshpass -p '{}' scp -P {} {} {}@{}:/tmp".format(password,port,customize_shell,username,ip)
-    customize_exec2='''./sshpass -p '{}' ssh -p{} {}@{} "bash /tmp/{} '{}' '{}' " '''.format(password,port,username,ip,customize_shell,customize_shell_args,add_user)
+    customize_exec2='''./sshpass -p '{}' ssh -p{} {}@{} "bash /tmp/{} '{}' '{}' '{}' " '''.format(password,port,username,ip,customize_shell,customize_shell_args, add_user, add_user_home)
     exec_history=[customize_exec1,customize_exec2]
     WriteLog('exec-history.log',exec_history)
 
