@@ -2,7 +2,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-10 10:22:22
- # @LastEditTime: 2023-03-14 14:26:26
+ # @LastEditTime: 2023-03-22 09:24:51
  # @description: now it is null
 ###
 
@@ -17,6 +17,7 @@ resultDns=`echo $1 | grep 'dns'`
 resultPaas=`echo $1 | grep 'paas'`
 resultUlimit=`echo $1 | grep 'ulimit'`
 resultUmask=`echo $1 | grep 'umask'`
+resultCron=`echo $1 | grep 'cron'`
 user=$2
 home=$3
 
@@ -76,6 +77,12 @@ function configUmask {
   fi
 }
 
+function configCron {
+    content = `sudo grep "$user" /etc/cron.allow`
+    if [ -z "${content}" ] ;then
+        echo "$user" | sudo tee -a /etc/cron.allow
+    fi
+}
 
 if [[ -n $resultSudo ]] ;then
     echo 'info: exec sudoIssue'
@@ -102,6 +109,10 @@ if [[ -n $resultUmask ]] ;then
     configUmask
 fi
 
+if [[ -n $resultCron ]] ;then
+    echo 'info: exec Cron'
+    configCron
+fi
 
 selinuxOff
 iptablesOff

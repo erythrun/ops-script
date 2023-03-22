@@ -19,8 +19,8 @@ add_user_home='/home/ctgcloud' #/app/ctgcache,/home/ctgcloud
 
 #diy shell
 customize_shell='init.sh'
-customize_shell_args='sudo,dns,umask,'
-#'sudo,dns,paas,ulimit,umask'
+customize_shell_args='sudo,dns,umask,cron'
+#'sudo,dns,paas,ulimit,umask,cron'
 
 def Prepare(ip, port, username, password):
     prepare_exec1="chmod +x sshpass"
