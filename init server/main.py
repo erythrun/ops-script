@@ -2,7 +2,7 @@
 Author: Athrun
 Email: erythron@outlook.com
 Date: 2023-01-06 10:24:19
-LastEditTime: 2023-03-14 14:28:18
+LastEditTime: 2023-03-22 09:17:55
 description: linux init, use: python2 init.py <ip.file>(ip port account password)
 '''
 import os,sys,time
@@ -11,8 +11,8 @@ import os,sys,time
 disk_type=1
 disk_init='vdb'
 disk_mount='/app'
-jdk_package='jdk-8u251-linux-arm64-vfp-hflt.tar.gz'
-jdk_decompress='jdk1.8.0_251'
+jdk_package='jdk-8u202-linux-x64.tar.gz'
+jdk_decompress='jdk1.8.0_202'
 add_user='ctgcloud'
 add_user_pd='bnStkgj_5w4eEDy'
 add_user_home='/home/ctgcloud' #/app/ctgcache,/home/ctgcloud
@@ -26,7 +26,7 @@ def Prepare(ip, port, username, password):
     prepare_exec1="chmod +x sshpass"
     prepare_exec2="./sshpass -p '{}' ssh -p{} {}@{} 'sudo chmod 777 /tmp'".format(password,port,username,ip)
 
-    file_exec1="./sshpass -p '{}' scp -P {} init-disk.sh {}@{}:/tmp".format(password,port,username,ip)
+    file_exec1="./sshpass -p '{}' scp -P {} ./init-disk.sh {}@{}:/tmp".format(password,port,username,ip)
     add_user_exec1="./sshpass -p '{}' ssh -p{} {}@{} 'sudo chmod 640 /etc/sudoers'".format(password,port,username,ip)
     exec_history=[prepare_exec2,file_exec1,add_user_exec1]
     WriteLog('exec-history.log',exec_history)
@@ -55,8 +55,8 @@ def Prepare(ip, port, username, password):
 
 
 def Java(ip, port, username, password):
-    java_exec1="./sshpass -p '{}' scp -P {} {} {}@{}:/tmp/".format(password,port,jdk_package,username,ip)
-    java_exec2="./sshpass -p '{}' scp -P {} install-jdk.sh {}@{}:/tmp".format(password,port,username,ip)
+    java_exec1="./sshpass -p '{}' scp -P {} ./{} {}@{}:/tmp/".format(password,port,jdk_package,username,ip)
+    java_exec2="./sshpass -p '{}' scp -P {} ./install-jdk.sh {}@{}:/tmp".format(password,port,username,ip)
     java_exec3='''./sshpass -p '{}' ssh -p{} {}@{} 'bash /tmp/install-jdk.sh "{}" "{}"' '''.format(password,port,username,ip,jdk_package,jdk_decompress)
     exec_history=[java_exec1,java_exec2,java_exec3]
     WriteLog('exec-history.log',exec_history)
@@ -117,7 +117,7 @@ def AddUser(ip, port, username, password):
     WriteLog('result-history.log',result_history)
 
 def Customize(ip, port, username, password):
-    customize_exec1="./sshpass -p '{}' scp -P {} {} {}@{}:/tmp".format(password,port,customize_shell,username,ip)
+    customize_exec1="./sshpass -p '{}' scp -P {} ./{} {}@{}:/tmp".format(password,port,customize_shell,username,ip)
     customize_exec2='''./sshpass -p '{}' ssh -p{} {}@{} "bash /tmp/{} '{}' '{}' '{}' " '''.format(password,port,username,ip,customize_shell,customize_shell_args, add_user, add_user_home)
     exec_history=[customize_exec1,customize_exec2]
     WriteLog('exec-history.log',exec_history)

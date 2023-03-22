@@ -15,11 +15,11 @@ function disk {
   echo "sudo mkfs.xfs /dev/$1"
   sudo mkfs.xfs /dev/$1
   sleep 5
-  echo "sudo mkdir $2"
-  sudo mkdir $2
   list=`sudo blkid | grep $1 | awk -F: '{print $2}' | awk -F\" '{print $2}'`
   if [ -n "${list}" ] ;then
-  #echo "UUID="$list " $2 xfs defaults 0 0"
+    echo "sudo mkdir $2"
+    sudo mkdir $2
+    #echo "UUID="$list " $2 xfs defaults 0 0"
     echo "UUID="$list " $2 xfs defaults 0 0" | sudo tee -a  /etc/fstab
     sudo mount -a
     sleep 1
