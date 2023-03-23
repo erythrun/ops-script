@@ -2,7 +2,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-10 10:22:22
- # @LastEditTime: 2023-03-22 09:24:51
+ # @LastEditTime: 2023-03-23 09:29:33
  # @description: now it is null
 ###
 
@@ -78,7 +78,7 @@ function configUmask {
 }
 
 function configCron {
-    content = `sudo grep "$user" /etc/cron.allow`
+    content=`sudo grep "$user" /etc/cron.allow`
     if [ -z "${content}" ] ;then
         echo "$user" | sudo tee -a /etc/cron.allow
     fi

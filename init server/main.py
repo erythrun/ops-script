@@ -2,7 +2,7 @@
 Author: Athrun
 Email: erythron@outlook.com
 Date: 2023-01-06 10:24:19
-LastEditTime: 2023-03-22 09:17:55
+LastEditTime: 2023-03-23 09:30:44
 description: linux init, use: python2 init.py <ip.file>(ip port account password)
 '''
 import os,sys,time
@@ -19,8 +19,10 @@ add_user_home='/home/ctgcloud' #/app/ctgcache,/home/ctgcloud
 
 #diy shell
 customize_shell='init.sh'
-customize_shell_args='sudo,dns,umask,cron'
+customize_shell_args='sudo,dns,umask'
 #'sudo,dns,paas,ulimit,umask,cron'
+#cron检查应该使用在国产垃圾系统上
+
 
 def Prepare(ip, port, username, password):
     prepare_exec1="chmod +x sshpass"
