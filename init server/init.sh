@@ -2,7 +2,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-10 10:22:22
- # @LastEditTime: 2023-03-23 09:29:33
+ # @LastEditTime: 2023-03-27 10:29:23
  # @description: now it is null
 ###
 
@@ -18,6 +18,7 @@ resultPaas=`echo $1 | grep 'paas'`
 resultUlimit=`echo $1 | grep 'ulimit'`
 resultUmask=`echo $1 | grep 'umask'`
 resultCron=`echo $1 | grep 'cron'`
+resultHostKey=`echo $1 | grep 'hostkey'`
 user=$2
 home=$3
 
@@ -84,6 +85,16 @@ function configCron {
     fi
 }
 
+function hostKeyConfig {
+  content=`grep "StrictHostKeyChecking" ~/.ssh/config`
+  if [ -z "${content}" ] ;then
+  cat << EOF | sudo tee -a ~/.ssh/config
+Host *
+  StrictHostKeyChecking no
+EOF
+  fi
+}
+
 if [[ -n $resultSudo ]] ;then
     echo 'info: exec sudoIssue'
     sudoIssue
@@ -112,6 +123,11 @@ fi
 if [[ -n $resultCron ]] ;then
     echo 'info: exec Cron'
     configCron
+fi
+
+if [[ -n $resultHostKey ]] ;then
+    echo 'info: exec hostKeyConfig'
+    hostKeyConfig
 fi
 
 selinuxOff
