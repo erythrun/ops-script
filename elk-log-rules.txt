@@ -33,6 +33,7 @@ filter {
 
     }
     mutate {
+        #切割
         split => ["data_tmp", "/"]
         add_field => {
             "localnet" => "%{[data_tmp][5]}"
@@ -41,7 +42,9 @@ filter {
         remove_field => "data_tmp"
     }
     aggregate {
+        #聚合计算, 通过task_id区分队列
         task_id => "%{localnet}_%{interface}"
+        #循环时间
         timeout => 60
         push_map_as_event_on_timeout => true
         code => "
@@ -58,6 +61,7 @@ filter {
             map['vista_max_time_list'] ||= [];
             map['vista_max_time_list'].append(event.get('vista_time').to_i);
         "
+        #时间结束后执行
         timeout_code =>"
             cost_avg_time = (event.get('cost_total_time') / event.get('count')).round(4);
             vista_avg_time = (event.get('vista_total_time') / event.get('count')).round(4);
@@ -82,7 +86,7 @@ filter {
 }
 output {
     elasticsearch {
-        hosts => ["http://132.121.97.94:9200","http://132.121.97.93:9200","http://132.121.97.146:9200"]
+        hosts => ["<es-ip1>","<es-ip2>"]
         index => "ptc_%{+YYYY.MM.dd}"
         user => "ptc"
         password => "passwd"
