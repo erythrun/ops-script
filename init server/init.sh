@@ -2,7 +2,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-10 10:22:22
- # @LastEditTime: 2023-04-07 14:54:32
+ # @LastEditTime: 2023-04-10 19:11:27
  # @description: now it is null
 ###
 
@@ -100,7 +100,7 @@ EOF
 function sshPublicKey {
   sudo mkdir $home/.ssh
   cat << EOF | sudo tee $home/.ssh/authorized_keys
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC55q6wQT/YovW4fRQ1+pajQC7/ocntYmOG6yMFjjH0glxxwV4UplnVEVNyaeIBX+J4CaaU2dzQ84+2Utx2Qtt5qH1Wj/pJAL10+uQqfuZed3ZhmQWdnzxUVVQeWHNTb4kP7I2EDusYiY0afd/HDQSi5GQLbIrEFtGSZqRnKVJ9V2Bs6+6tHNtoQHzbTRrCMoSKbFCwJaZ5JPRpzN81zG4KRsxayBRnJUQQRwx65yszj7/sIV4L2XB98/lLicLwjr1gVfg+0L7k9rvjzWFAN/teSxqC/ZkwDTr/jCC1q8m9LvVietHCTiC7A0mH0F77Xe2rsr46Kg2TjuiOC9mnR80NZFvU5l9UZkpPZMxDIyKi9VxjTS4PSbFe+/bteXxh5EAkg+YiHMY5Xlr9njF38aJPBdKzvTOm3OFmPofusWdCtMyISTNQ3DrhwMafloho0vk9ImdNitLDXqjt+AyY9I0E36FUe+vq9Yj57DkOdhSlhp0GdTP0pGQzD+Eg1JYDjB8= ctgcloud@telcom.cn
+ssh-rsa xxx ctgcloud@telcom.cn
 EOF
   sudo chmod 600 $home/.ssh/authorized_keys
   sudo chown $user:$user $home/.ssh/authorized_keys
