@@ -2,7 +2,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-10 10:22:22
- # @LastEditTime: 2023-04-10 19:11:27
+ # @LastEditTime: 2023-04-21 10:45:40
  # @description: now it is null
 ###
 
@@ -54,19 +54,13 @@ function sshdConfig {
 }
 
 function ulimitConfig {
-cat << EOF | sudo tee -a /etc/security/limits.conf
+    cat << EOF | sudo tee -a /etc/security/limits.conf
 $user - nofile 65536
 $user - nproc 4096
 $user - fsize unlimited
 $user - as unlimited
 $user - memLock unlimited
 EOF
-}
-
-function forPaas {
-  mkdir /app/paas_deploy_data
-  mkdir /app/paas_installation
-  chown $user:$user /app/paas_*
 }
 
 function configUmask {
@@ -90,7 +84,7 @@ function configCron {
 function hostKeyConfig {
   content=`grep "StrictHostKeyChecking" ~/.ssh/config`
   if [ -z "${content}" ] ;then
-  cat << EOF | sudo tee -a ~/.ssh/config
+  cat << EOF | tee -a ~/.ssh/config
 Host *
   StrictHostKeyChecking no
 EOF
@@ -103,7 +97,7 @@ function sshPublicKey {
 ssh-rsa xxx ctgcloud@telcom.cn
 EOF
   sudo chmod 600 $home/.ssh/authorized_keys
-  sudo chown $user:$user $home/.ssh/authorized_keys
+  sudo chown $user:$user -R $home/.ssh
 }
 
 
