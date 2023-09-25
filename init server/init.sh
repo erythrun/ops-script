@@ -2,7 +2,7 @@
  # @Author: Athrun
  # @Email: erythron@outlook.com
  # @Date: 2022-12-10 10:22:22
- # @LastEditTime: 2023-04-21 10:45:40
+ # @LastEditTime: 2023-09-25 15:01:40
  # @description: now it is null
 ###
 
@@ -90,16 +90,6 @@ Host *
 EOF
   fi
 }
-
-function sshPublicKey {
-  sudo mkdir $home/.ssh
-  cat << EOF | sudo tee $home/.ssh/authorized_keys
-ssh-rsa xxx ctgcloud@telcom.cn
-EOF
-  sudo chmod 600 $home/.ssh/authorized_keys
-  sudo chown $user:$user -R $home/.ssh
-}
-
 
 if [[ -n $resultSudo ]] ;then
     echo 'info: exec sudoIssue'

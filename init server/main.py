@@ -2,7 +2,7 @@
 Author: Athrun
 Email: erythron@outlook.com
 Date: 2023-01-06 10:24:19
-LastEditTime: 2023-04-10 19:11:40
+LastEditTime: 2023-09-25 15:04:54
 description: linux init, use: python2 init.py <ip.file>(ip port account password)
 '''
 import os,sys,time
@@ -20,7 +20,8 @@ add_user_home='/home/ctgcloud' #/app/ctgcache,/home/ctgcloud
 #customize shell
 customize_shell='init.sh'
 customize_shell_args='sudo,dns,umask,cron'
-#'sudo,dns,paas,ulimit,umask,cron,hostkey'
+#'sudo,dns,ulimit,umask,cron,hostkey'
+
 
 def Prepare(ip, port, username, password):
     prepare_exec1="chmod +x sshpass"
@@ -97,7 +98,10 @@ def AddUser(ip, port, username, password):
     add_user_exec1="./sshpass -p '{}' ssh -p{} {}@{} 'sudo useradd {} -d {} '".format(password,port,username,ip,add_user,add_user_home)
     add_user_exec2='''./sshpass -p '{}' ssh -p{} {}@{} "echo '{}' | sudo passwd --stdin {}" '''.format(password,port,username,ip,add_user_pd,add_user)
     add_user_exec3='''./sshpass -p '{}' ssh -p{} {}@{} 'echo "{} ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers' '''.format(password,port,username,ip,add_user)
-    exec_history=[add_user_exec1,add_user_exec2,add_user_exec3]
+    add_user_exec4="./sshpass -p '{}' ssh-copy-id -i id_rsa.pub {}@{}".format(add_user_pd,add_user,ip)
+
+    exec_history=[add_user_exec1,add_user_exec2,add_user_exec3,add_user_exec4]
+
     WriteLog('exec-history.log',exec_history)
     print("AddUser exec: ", add_user_exec1)
     adduser_result1=ip+" AddUser result1: "+os.popen(add_user_exec1).read()
@@ -111,8 +115,13 @@ def AddUser(ip, port, username, password):
     adduser_result3=ip+" AddUser result3: "+os.popen(add_user_exec3).read()
     print(adduser_result3)
 
-    result_history=[adduser_result1,adduser_result2,adduser_result3]
+    print("AddUser exec: ", add_user_exec4)
+    adduser_result4=ip+" AddUser result4: "+os.popen(add_user_exec4).read()
+    print(adduser_result4)
+
+    result_history=[adduser_result1,adduser_result2,adduser_result3,adduser_result4]
     WriteLog('result-history.log',result_history)
+
 
 def Customize(ip, port, username, password):
     customize_exec1="./sshpass -p '{}' scp -P {} ./{} {}@{}:/tmp".format(password,port,customize_shell,username,ip)
@@ -152,6 +161,7 @@ def CheckSSH(ip, port, username, password):
         else:
             f.write(ip+" ssh failed\n")
             return 1
+
 
 if __name__ == "__main__":
     ip_file = sys.argv[1]
