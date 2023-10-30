@@ -2,7 +2,7 @@
 Author: Athrun
 Email: erythron@outlook.com
 Date: 2023-01-06 10:24:19
-LastEditTime: 2023-10-30 11:17:36
+LastEditTime: 2023-10-30 14:07:27
 description: linux init, use: python2 init.py <ip.file>(ip port account password)
 '''
 import os,sys,time
@@ -13,9 +13,9 @@ disk_init='vdb'
 disk_mount='/app'  #/dcos
 jdk_package='' #jdk-8u251-linux-arm64-vfp-hflt.tar.gz jdk-8u202-linux-x64.tar
 jdk_decompress='jdk1.8.0_2xx'
-add_user='ctgcloud'
-add_user_pd='bnStkgj_5w4eEDy'
-add_user_home='/home/ctgcloud' #/app/ctgcache,/home/ctgcloud
+add_user='<USER>'
+add_user_pd='<password>'
+add_user_home='/home/<USER>' #/app/ctgcache,/home/ctgcloud
 
 #diy shell
 customize_shell='init.sh'
