@@ -2,7 +2,7 @@
 Author: Athrun
 Email: erythron@outlook.com
 Date: 2023-01-06 10:24:19
-LastEditTime: 2023-09-25 15:04:54
+LastEditTime: 2023-10-30 11:17:36
 description: linux init, use: python2 init.py <ip.file>(ip port account password)
 '''
 import os,sys,time
@@ -11,22 +11,21 @@ import os,sys,time
 disk_type=1
 disk_init='vdb'
 disk_mount='/app'  #/dcos
-jdk_package='jdk-8u251-linux-arm64-vfp-hflt.tar.gz' #jdk-8u251-linux-arm64-vfp-hflt.tar.gz
-jdk_decompress='jdk1.8.0_251'
+jdk_package='' #jdk-8u251-linux-arm64-vfp-hflt.tar.gz jdk-8u202-linux-x64.tar
+jdk_decompress='jdk1.8.0_2xx'
 add_user='ctgcloud'
-add_user_pd='password'
+add_user_pd='bnStkgj_5w4eEDy'
 add_user_home='/home/ctgcloud' #/app/ctgcache,/home/ctgcloud
 
-#customize shell
+#diy shell
 customize_shell='init.sh'
-customize_shell_args='sudo,dns,umask,cron'
-#'sudo,dns,ulimit,umask,cron,hostkey'
+customize_shell_args='sudo,dns,umask,cron,'
+#'sudo,dns,paas,ulimit,umask,cron,hostkey'
 
 
 def Prepare(ip, port, username, password):
     prepare_exec1="chmod +x sshpass"
     prepare_exec2="./sshpass -p '{}' ssh -p{} {}@{} 'sudo chmod 777 /tmp'".format(password,port,username,ip)
-
     file_exec1="./sshpass -p '{}' scp -P {} ./init-disk.sh {}@{}:/tmp".format(password,port,username,ip)
     add_user_exec1="./sshpass -p '{}' ssh -p{} {}@{} 'sudo chmod 640 /etc/sudoers'".format(password,port,username,ip)
     exec_history=[prepare_exec2,file_exec1,add_user_exec1]
@@ -112,7 +111,7 @@ def AddUser(ip, port, username, password):
     print(adduser_result2)
 
     print("AddUser exec: ", add_user_exec3)
-    adduser_result3=ip+" AddUser result3: "+os.popen(add_user_exec3).read()
+    adduser_result3=ip+" AddUser result4: "+os.popen(add_user_exec3).read()
     print(adduser_result3)
 
     print("AddUser exec: ", add_user_exec4)
